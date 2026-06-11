@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資料收集系統</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 資料收集系統</h1>
+            <p>自動從 API 取得資料並存儲到 Google Sheets</p>
+        </header>
+
+        <main>
+            <!-- 控制面板 -->
+            <section class="control-panel">
+                <h2>控制面板</h2>
+                
+                <!-- API 配置 -->
+                <div class="form-group">
+                    <label for="apiUrl">API 網址：</label>
+                    <input 
+                        type="text" 
+                        id="apiUrl" 
+                        placeholder="輸入 API 端點 (例如: https://api.example.com/data)"
+                        value="https://jsonplaceholder.typicode.com/users"
+                    >
+                </div>
+
+                <!-- Google Apps Script 網址 -->
+                <div class="form-group">
+                    <label for="gasUrl">Google Apps Script 部署網址：</label>
+                    <input 
+                        type="text" 
+                        id="gasUrl" 
+                        placeholder="輸入 GAS 部署 URL"
+                        value=""
+                    >
+                </div>
+
+                <!-- 按鈕組 -->
+                <div class="button-group">
+                    <button id="fetchBtn" class="btn btn-primary">
+                        <span class="btn-icon">🔄</span> 從 API 取得資料
+                    </button>
+                    <button id="saveBtn" class="btn btn-success" disabled>
+                        <span class="btn-icon">💾</span> 保存到 Google Sheets
+                    </button>
+                    <button id="clearBtn" class="btn btn-secondary">
+                        <span class="btn-icon">🗑️</span> 清空資料
+                    </button>
+                </div>
+
+                <!-- 狀態提示 -->
+                <div id="status" class="status"></div>
+            </section>
+
+            <!-- 數據預覽 -->
+            <section class="data-section">
+                <h2>資料預覽</h2>
+                <div class="data-controls">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="搜尋資料..."
+                        class="search-box"
+                    >
+                    <span id="recordCount" class="record-count">共 0 筆資料</span>
+                </div>
+                <div id="dataContainer" class="data-container">
+                    <p class="placeholder">尚無資料，請先點擊「從 API 取得資料」</p>
+                </div>
+            </section>
+
+            <!-- JSON 編輯器 -->
+            <section class="json-section">
+                <h2>原始 JSON 資料</h2>
+                <button id="toggleJson" class="btn btn-small">展開/收起</button>
+                <pre id="jsonData" class="json-display">無資料</pre>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2026 資料收集系統 | 使用 API + Google Sheets</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
