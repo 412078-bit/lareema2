@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人工具中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .app-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .app-card h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .app-card p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .app-card .features {
+            text-align: left;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .app-card .features li {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        .app-card .features li:before {
+            content: "✓ ";
+            color: #11998e;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 14px 35px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.95em;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        .footer a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .app-card {
+                padding: 30px 20px;
+            }
+
+            .app-icon {
+                font-size: 3em;
+            }
+
+            .app-card h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 個人工具中心</h1>
+            <p>整合多個實用應用，提升工作效率</p>
+        </div>
+
+        <div class="apps-grid">
+            <!-- 資料收集系統 -->
+            <a href="index.html" class="app-card">
+                <div>
+                    <div class="app-icon">📊</div>
+                    <h2>資料收集系統</h2>
+                    <p>從任何 API 自動取得資料並存儲到 Google Sheets</p>
+                    <ul class="features">
+                        <li>API 自動填入資料</li>
+                        <li>實時搜尋過濾</li>
+                        <li>Google Sheets 存儲</li>
+                        <li>JSON 檢視器</li>
+                    </ul>
+                </div>
+                <button class="btn">進入應用 →</button>
+            </a>
+
+            <!-- 記帳系統 -->
+            <a href="expense-tracker.html" class="app-card">
+                <div>
+                    <div class="app-icon">💰</div>
+                    <h2>智能記帳系統</h2>
+                    <p>完整的個人記帳解決方案，記錄每一筆支出</p>
+                    <ul class="features">
+                        <li>快速記錄支出</li>
+                        <li>分類統計分析</li>
+                        <li>趨勢圖表展示</li>
+                        <li>Google Sheets 同步</li>
+                    </ul>
+                </div>
+                <button class="btn">進入應用 →</button>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>
+                © 2026 個人工具中心 | 
+                <a href="https://github.com/412078-bit/lareema2" target="_blank">GitHub</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

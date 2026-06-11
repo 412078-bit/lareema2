@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能記帳系統</title>
+    <link rel="stylesheet" href="expense-tracker.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 側邊欄導航 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>💰 記帳</h1>
+            </div>
+            <nav class="main-nav">
+                <a href="#" class="nav-item active" data-page="input">
+                    <span class="icon">📝</span>
+                    <span class="label">記錄支出</span>
+                </a>
+                <a href="#" class="nav-item" data-page="view">
+                    <span class="icon">📊</span>
+                    <span class="label">查看統計</span>
+                </a>
+                <a href="#" class="nav-item" data-page="list">
+                    <span class="icon">📋</span>
+                    <span class="label">詳細列表</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <span class="icon">⚙️</span>
+                    <span class="label">設定</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- 主要內容區域 -->
+        <main class="main-content">
+            <!-- 頂部欄 -->
+            <header class="top-bar">
+                <h2 id="page-title">記錄支出</h2>
+                <button id="syncBtn" class="btn btn-outline">
+                    <span>☁️ 同步到 Google Sheets</span>
+                </button>
+            </header>
+
+            <!-- 1. 記錄支出頁面 -->
+            <section id="input-page" class="page active">
+                <div class="input-container">
+                    <div class="form-card">
+                        <h3>新增支出記錄</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>日期 *</label>
+                                <input type="date" id="expenseDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>金額 *</label>
+                                <div class="input-with-unit">
+                                    <input type="number" id="expenseAmount" placeholder="0" min="0" step="0.01" required>
+                                    <span class="unit">NT$</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>項目名稱 *</label>
+                                <input type="text" id="expenseProject" placeholder="例如：午餐、交通、購物" required>
+                            </div>
+                            <div class="form-group">
+                                <label>分類 *</label>
+                                <select id="expenseCategory" required>
+                                    <option value="">-- 選擇分類 --</option>
+                                    <option value="food">🍔 飲食</option>
+                                    <option value="transport">🚗 交通</option>
+                                    <option value="shopping">🛍️ 購物</option>
+                                    <option value="entertainment">🎮 娛樂</option>
+                                    <option value="utilities">💡 生活</option>
+                                    <option value="medical">⚕️ 醫療</option>
+                                    <option value="education">📚 教育</option>
+                                    <option value="other">📌 其他</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>備註 (可選)</label>
+                            <textarea id="expenseNote" placeholder="添加任何相關備註..." rows="3"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button id="addBtn" class="btn btn-primary">
+                                <span>➕ 新增記錄</span>
+                            </button>
+                            <button id="clearFormBtn" class="btn btn-secondary">
+                                <span>🗑️ 清空表單</span>
+                            </button>
+                        </div>
+
+                        <!-- 快速模板 -->
+                        <div class="quick-templates">
+                            <h4>快速模板</h4>
+                            <div class="template-buttons">
+                                <button class="template-btn" data-template="breakfast">🥐 早餐</button>
+                                <button class="template-btn" data-template="lunch">🍜 午餐</button>
+                                <button class="template-btn" data-template="dinner">🍽️ 晚餐</button>
+                                <button class="template-btn" data-template="coffee">☕ 飲料</button>
+                                <button class="template-btn" data-template="taxi">🚕 計程車</button>
+                                <button class="template-btn" data-template="mrt">🚇 捷運</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 今日統計 -->
+                    <div class="summary-card">
+                        <h3>今日統計</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <span class="label">今日支出</span>
+                                <span class="value" id="todayTotal">NT$ 0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">今日筆數</span>
+                                <span class="value" id="todayCount">0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">本月支出</span>
+                                <span class="value" id="monthTotal">NT$ 0</span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="label">本月筆數</span>
+                                <span class="value" id="monthCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 統計分析頁面 -->
+            <section id="view-page" class="page">
+                <div class="analytics-container">
+                    <!-- 時間段選擇 -->
+                    <div class="time-selector">
+                        <button class="time-btn active" data-range="month">📅 本月</button>
+                        <button class="time-btn" data-range="week">📆 本週</button>
+                        <button class="time-btn" data-range="custom">🗓️ 自訂</button>
+                    </div>
+
+                    <div id="customDateRange" class="date-range-picker" style="display: none;">
+                        <input type="date" id="startDate">
+                        <span>到</span>
+                        <input type="date" id="endDate">
+                        <button class="btn btn-small">套用</button>
+                    </div>
+
+                    <!-- 統計卡片 -->
+                    <div class="stats-grid">
+                        <div class="stat-card total">
+                            <h4>總支出</h4>
+                            <p id="statTotal" class="stat-value">NT$ 0</p>
+                        </div>
+                        <div class="stat-card average">
+                            <h4>平均支出</h4>
+                            <p id="statAverage" class="stat-value">NT$ 0</p>
+                        </div>
+                        <div class="stat-card highest">
+                            <h4>最高支出</h4>
+                            <p id="statHighest" class="stat-value">NT$ 0</p>
+                        </div>
+                        <div class="stat-card count">
+                            <h4>筆數</h4>
+                            <p id="statCount" class="stat-value">0</p>
+                        </div>
+                    </div>
+
+                    <!-- 分類統計 -->
+                    <div class="chart-container">
+                        <div class="chart-section">
+                            <h3>按分類統計</h3>
+                            <div id="categoryChart" class="chart"></div>
+                            <div id="categoryList" class="category-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- 日支出趨勢 -->
+                    <div class="chart-container">
+                        <h3>日支出趨勢</h3>
+                        <div id="trendChart" class="trend-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. 詳細列表頁面 -->
+            <section id="list-page" class="page">
+                <div class="list-container">
+                    <!-- 搜尋和過濾 -->
+                    <div class="list-controls">
+                        <div class="search-group">
+                            <input type="text" id="searchInput" placeholder="搜尋項目名稱或備註...">
+                        </div>
+                        <div class="filter-group">
+                            <select id="filterCategory" class="filter-select">
+                                <option value="">全部分類</option>
+                                <option value="food">🍔 飲食</option>
+                                <option value="transport">🚗 交通</option>
+                                <option value="shopping">🛍️ 購物</option>
+                                <option value="entertainment">🎮 娛樂</option>
+                                <option value="utilities">💡 生活</option>
+                                <option value="medical">⚕️ 醫療</option>
+                                <option value="education">📚 教育</option>
+                                <option value="other">📌 其他</option>
+                            </select>
+                            <select id="filterMonth" class="filter-select">
+                                <option value="">全部月份</option>
+                            </select>
+                            <button id="exportBtn" class="btn btn-outline">📥 導出 CSV</button>
+                        </div>
+                    </div>
+
+                    <!-- 記錄列表 -->
+                    <div id="expenseList" class="expense-list">
+                        <p class="placeholder">無記錄，開始記帳吧！</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. 設定頁面 -->
+            <section id="settings-page" class="page">
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h3>Google Sheets 同步</h3>
+                        <div class="form-group">
+                            <label>Google Apps Script URL:</label>
+                            <input type="text" id="gasUrl" placeholder="輸入你的 GAS 部署 URL">
+                            <button class="btn btn-small" id="testGasBtn">🧪 測試連接</button>
+                        </div>
+                        <div id="gasStatus" class="status"></div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>分類管理</h3>
+                        <div class="category-management">
+                            <h4>自訂分類</h4>
+                            <div id="categoryList" class="category-list-edit">
+                                <!-- 動態生成 -->
+                            </div>
+                            <button class="btn btn-small" id="addCategoryBtn">➕ 新增分類</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>數據管理</h3>
+                        <div class="data-management">
+                            <button class="btn btn-outline" id="exportDataBtn">📥 導出所有數據 (JSON)</button>
+                            <button class="btn btn-outline" id="importDataBtn">📤 匯入數據 (JSON)</button>
+                            <button class="btn btn-danger" id="clearDataBtn">🗑️ 清空所有記錄</button>
+                        </div>
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>關於</h3>
+                        <p>智能記帳系統 v1.0</p>
+                        <p>完全離線使用，數據存儲在你的瀏覽器中</p>
+                        <p>支持導出到 Google Sheets</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 通知提示 -->
+    <div id="notification" class="notification"></div>
+
+    <!-- 模態窗口：編輯記錄 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2>編輯支出記錄</h2>
+            <form id="editForm">
+                <div class="form-group">
+                    <label>日期</label>
+                    <input type="date" id="editDate" required>
+                </div>
+                <div class="form-group">
+                    <label>金額</label>
+                    <input type="number" id="editAmount" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>項目</label>
+                    <input type="text" id="editProject" required>
+                </div>
+                <div class="form-group">
+                    <label>分類</label>
+                    <select id="editCategory" required></select>
+                </div>
+                <div class="form-group">
+                    <label>備註</label>
+                    <textarea id="editNote" rows="3"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-secondary" id="deleteBtn">刪除</button>
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="expense-tracker.js"></script>
+</body>
+</html>

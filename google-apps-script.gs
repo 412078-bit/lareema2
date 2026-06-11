@@ -34,6 +34,8 @@ function doPost(e) {
         
         if (action === 'appendData') {
             return appendDataToSheet(data.data, data.timestamp);
+        } else if (action === 'appendExpenses') {
+            return appendExpensesToSheet(data.data, data.timestamp);
         } else if (action === 'test') {
             return createResponse(true, '連接成功', '');
         } else {
@@ -105,6 +107,98 @@ function appendDataToSheet(data, timestamp) {
     } catch (error) {
         Logger.log('appendDataToSheet 錯誤: ' + error.toString());
         return createResponse(false, '保存失敗: ' + error.toString(), '');
+    }
+}
+
+/**
+ * 將支出資料添加到 Google Sheet
+ */
+function appendExpensesToSheet(expenses, timestamp) {
+    try {
+        const sheet = getOrCreateSheet('記帳');
+        
+        // 確保資料是陣列
+        if (!Array.isArray(expenses)) {
+            expenses = [expenses];
+        }
+        
+        // 初始化表頭
+        if (sheet.getLastRow() === 0) {
+            const headers = ['日期', '項目', '金額', '分類', '備註', '同步時間'];
+            sheet.appendRow(headers);
+        }
+        
+        // 分類映射
+        const categoryNames = {
+            'food': '飲食',
+            'transport': '交通',
+            'shopping': '購物',
+            'entertainment': '娛樂',
+            'utilities': '生活',
+            'medical': '醫療',
+            'education': '教育',
+            'other': '其他'
+        };
+        
+        // 添加資料行
+        expenses.forEach(expense => {
+            const categoryName = categoryNames[expense.category] || expense.category;
+            const row = [
+                expense.date,
+                expense.project,
+                expense.amount,
+                categoryName,
+                expense.note || '',
+                new Date(timestamp).toLocaleString('zh-TW')
+            ];
+            sheet.appendRow(row);
+        });
+        
+        // 自動調整列寬
+        autoResizeColumns(sheet, 6);
+        
+        // 設置格式
+        formatExpenseSheet(sheet);
+        
+        return createResponse(
+            true,
+            `成功保存 ${expenses.length} 筆支出記錄`,
+            {
+                recordsAdded: expenses.length,
+                sheetName: '記帳',
+                timestamp: new Date().toISOString()
+            }
+        );
+        
+    } catch (error) {
+        Logger.log('appendExpensesToSheet 錯誤: ' + error.toString());
+        return createResponse(false, '保存失敗: ' + error.toString(), '');
+    }
+}
+
+/**
+ * 格式化支出工作表
+ */
+function formatExpenseSheet(sheet) {
+    try {
+        // 設置表頭格式
+        const headerRange = sheet.getRange(1, 1, 1, 6);
+        headerRange.setBackground('#667eea');
+        headerRange.setFontColor('white');
+        headerRange.setFontWeight('bold');
+        
+        // 設置數字格式
+        const lastRow = sheet.getLastRow();
+        if (lastRow > 1) {
+            const amountRange = sheet.getRange(2, 3, lastRow - 1, 1);
+            amountRange.setNumberFormat('NT$ #,##0.00');
+            
+            // 設置日期格式
+            const dateRange = sheet.getRange(2, 1, lastRow - 1, 1);
+            dateRange.setNumberFormat('yyyy-mm-dd');
+        }
+    } catch (error) {
+        Logger.log('格式化失敗: ' + error.toString());
     }
 }
 
